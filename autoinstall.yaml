@@ -1,0 +1,74 @@
+#cloud-config
+autoinstall:
+  version: 1
+  
+  # Preferências de localização
+  locale: pt_BR.UTF-8
+  keyboard:
+    layout: br
+    
+  # Configuração de rede (DHCP por padrão)
+  network:
+    network:
+      version: 2
+      ethernets:
+        eth0:
+          dhcp4: true
+          
+  # Configuração de armazenamento (com criptografia)
+  storage:
+    layout:
+      name: direct
+    config:
+      - type: disk
+        id: disk-main
+        path: /dev/sda
+        ptable: gpt
+      - type: partition
+        id: boot-partition
+        device: disk-main
+        size: 500M
+        flag: boot
+        grub_device: true
+      - type: partition
+        id: root-partition
+        device: disk-main
+        size: -1
+      - type: dm_crypt
+        id: dm_crypt-0
+        volume: root-partition
+        key: ""  # Será solicitada durante a instalação
+        dm_name: root-encrypted
+      - type: format
+        id: boot-format
+        volume: boot-partition
+        fstype: ext4
+      - type: format
+        id: root-format
+        volume: dm_crypt-0
+        fstype: ext4
+      - type: mount
+        id: boot-mount
+        device: boot-format
+        path: /boot
+      - type: mount
+        id: root-mount
+        device: root-format
+        path: /
+        
+  # Informações de usuário
+  identity:
+    hostname: ubuntu-server
+    username: seuusuario
+    password: $6$v2hQvx/ec0AE3gpA$VpADlI.hi.Ban4lTTsFtqzmoC46aqplwrwW/9/6cGvrL.6G8apb/H9lX5BvzNBAHyxdzyAoStJWRH9sVDFswk0
+    
+  # Atualizações
+  updates: security
+  
+  # Pacotes adicionais para instalar
+  packages:
+    - build-essential
+    - vim
+    - curl
+    - wget
+    - git
