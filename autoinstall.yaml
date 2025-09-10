@@ -17,11 +17,12 @@ autoinstall:
       # Disco principal
       - type: disk
         id: disk-nvme
-        path: /dev/nvme0n1
+        path: /dev/vda
         ptable: gpt
         wipe: superblock-recursive
+        preserve: false
       
-      # Partição EFI (1GB)
+      # Partição EFI (equivalente a nvme0n1p1)
       - type: partition
         id: partition-efi
         device: disk-nvme
@@ -30,14 +31,14 @@ autoinstall:
         flag: boot
         grub_device: true
       
-      # Partição Boot (2GB)
+      # Partição Boot (equivalente a nvme0n1p2)
       - type: partition
         id: partition-boot
         device: disk-nvme
         number: 2
         size: 2G
       
-      # Partição para criptografia (resto do disco)
+      # Partição para criptografia (equivalente a nvme0n1p3)
       - type: partition
         id: partition-encrypted
         device: disk-nvme
@@ -56,28 +57,28 @@ autoinstall:
         fstype: ext4
         volume: partition-boot
       
-      # Configuração de criptografia LUKS
+      # Criptografia LUKS (dm_crypt-0)
       - type: dm_crypt
         id: dmcrypt-root
         volume: partition-encrypted
         dm_name: dm_crypt-0
         key: "mudar123"
       
-      # Grupo de volume LVM
+      # LVM Physical Volume
       - type: lvm_volgroup
         id: ubuntu-vg
         name: ubuntu-vg
         devices:
           - dmcrypt-root
       
-      # Volume lógico LVM
+      # LVM Logical Volume
       - type: lvm_partition
         id: ubuntu-lv
         name: ubuntu-lv
         volgroup: ubuntu-vg
         size: -1
       
-      # Formatação do volume LVM
+      # Formatação do LVM
       - type: format
         id: format-root
         fstype: ext4
@@ -102,9 +103,11 @@ autoinstall:
   packages:
     - ubuntu-desktop-minimal
     - cryptsetup
+    - cryptsetup-initramfs
     - lvm2
   
   timezone: America/Sao_Paulo
   
   late-commands:
-    - echo 'Instalação com EFI + Boot + LVM sobre LUKS concluída'
+    - curtin in-target --target=/target -- update-initramfs -u
+    - echo 'Sistema com criptografia LUKS + LVM configurado'
