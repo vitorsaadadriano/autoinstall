@@ -10,62 +10,85 @@ autoinstall:
     username: suporte
     password: $6$v2hQvx/ec0AE3gpA$VpADlI.hi.Ban4lTTsFtqzmoC46aqplwrwW/9/6cGvrL.6G8apb/H9lX5BvzNBAHyxdzyAoStJWRH9sVDFswk0
   
-  # FORÇAR uso da configuração customizada
   storage:
     layout:
       name: custom
-    swap:
-      size: 0
     config:
+      # Disco principal
       - type: disk
-        id: disk-vda
-        path: /dev/vda
+        id: disk-nvme
+        path: /dev/nvme0n1
         ptable: gpt
         wipe: superblock-recursive
-        preserve: false
       
-      # Partição BIOS Boot
+      # Partição EFI (1GB)
       - type: partition
-        id: partition-bios
-        device: disk-vda
+        id: partition-efi
+        device: disk-nvme
         number: 1
-        size: 1M
-        flag: bios_grub
+        size: 1G
+        flag: boot
+        grub_device: true
       
-      # Partição Boot (não criptografada)
+      # Partição Boot (2GB)
       - type: partition
         id: partition-boot
-        device: disk-vda
+        device: disk-nvme
         number: 2
-        size: 1G
+        size: 2G
       
-      # Partição para criptografia
+      # Partição para criptografia (resto do disco)
       - type: partition
         id: partition-encrypted
-        device: disk-vda
+        device: disk-nvme
         number: 3
         size: -1
       
-      # Formatação da partição boot
+      # Formatação EFI
+      - type: format
+        id: format-efi
+        fstype: fat32
+        volume: partition-efi
+      
+      # Formatação Boot
       - type: format
         id: format-boot
         fstype: ext4
         volume: partition-boot
       
-      # CRIPTOGRAFIA LUKS
+      # Configuração de criptografia LUKS
       - type: dm_crypt
         id: dmcrypt-root
         volume: partition-encrypted
-        dm_name: root-encrypted
+        dm_name: dm_crypt-0
         key: "mudar123"
       
-      # Formatação da partição criptografada
+      # Grupo de volume LVM
+      - type: lvm_volgroup
+        id: ubuntu-vg
+        name: ubuntu-vg
+        devices:
+          - dmcrypt-root
+      
+      # Volume lógico LVM
+      - type: lvm_partition
+        id: ubuntu-lv
+        name: ubuntu-lv
+        volgroup: ubuntu-vg
+        size: -1
+      
+      # Formatação do volume LVM
       - type: format
         id: format-root
         fstype: ext4
-        volume: dmcrypt-root
+        volume: ubuntu-lv
       
       # Montagens
+      - type: mount
+        id: mount-efi
+        device: format-efi
+        path: /boot/efi
+      
       - type: mount
         id: mount-boot
         device: format-boot
@@ -79,11 +102,9 @@ autoinstall:
   packages:
     - ubuntu-desktop-minimal
     - cryptsetup
-    - cryptsetup-initramfs
+    - lvm2
   
   timezone: America/Sao_Paulo
   
-  # Comandos para garantir criptografia
   late-commands:
-    - curtin in-target --target=/target -- update-initramfs -u
-    - echo 'Criptografia LUKS configurada'
+    - echo 'Instalação com EFI + Boot + LVM sobre LUKS concluída'
