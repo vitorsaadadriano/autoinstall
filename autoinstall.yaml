@@ -1,74 +1,77 @@
 #cloud-config
 autoinstall:
   version: 1
-  
-  # Preferências de localização
   locale: pt_BR.UTF-8
   keyboard:
     layout: br
-    
-  # Configuração de rede (DHCP por padrão)
-  network:
-    network:
-      version: 2
-      ethernets:
-        eth0:
-          dhcp4: true
-          
-  # Configuração de armazenamento (com criptografia)
+  
+  identity:
+    hostname: BRJTNO
+    username: suporte
+    password: $6$v2hQvx/ec0AE3gpA$VpADlI.hi.Ban4lTTsFtqzmoC46aqplwrwW/9/6cGvrL.6G8apb/H9lX5BvzNBAHyxdzyAoStJWRH9sVDFswk0
+  
   storage:
     layout:
-      name: direct
+      name: custom
     config:
+      # Disco principal
       - type: disk
-        id: disk-main
-        path: /dev/sda
+        id: disk-vda
+        path: /dev/vda
         ptable: gpt
+        wipe: superblock-recursive
+      
+      # Partição EFI/Boot
       - type: partition
-        id: boot-partition
-        device: disk-main
-        size: 500M
+        id: partition-efi
+        device: disk-vda
+        number: 1
+        size: 512M
         flag: boot
         grub_device: true
+      
+      # Partição para criptografia
       - type: partition
-        id: root-partition
-        device: disk-main
+        id: partition-encrypted
+        device: disk-vda
+        number: 2
         size: -1
+      
+      # Formatação EFI
+      - type: format
+        id: format-efi
+        fstype: fat32
+        volume: partition-efi
+      
+      # Configuração de criptografia LUKS
       - type: dm_crypt
-        id: dm_crypt-0
-        volume: root-partition
-        key: ""  # Será solicitada durante a instalação
-        dm_name: root-encrypted
+        id: dmcrypt-root
+        volume: partition-encrypted
+        dm_name: ubuntu-encrypted
+        key: "mudar123"
+      
+      # Formatação da partição criptografada
       - type: format
-        id: boot-format
-        volume: boot-partition
+        id: format-root
         fstype: ext4
-      - type: format
-        id: root-format
-        volume: dm_crypt-0
-        fstype: ext4
+        volume: dmcrypt-root
+      
+      # Montagens
       - type: mount
-        id: boot-mount
-        device: boot-format
-        path: /boot
+        id: mount-efi
+        device: format-efi
+        path: /boot/efi
+      
       - type: mount
-        id: root-mount
-        device: root-format
+        id: mount-root
+        device: format-root
         path: /
-        
-  # Informações de usuário
-  identity:
-    hostname: ubuntu-server
-    username: seuusuario
-    password: $6$v2hQvx/ec0AE3gpA$VpADlI.hi.Ban4lTTsFtqzmoC46aqplwrwW/9/6cGvrL.6G8apb/H9lX5BvzNBAHyxdzyAoStJWRH9sVDFswk0
-    
-  # Atualizações
-  updates: security
   
-  # Pacotes adicionais para instalar
   packages:
-    - build-essential
-    - vim
-    - curl
-    - wget
-    - git
+    - ubuntu-desktop-minimal
+    - cryptsetup
+  
+  timezone: America/Sao_Paulo
+  
+  late-commands:
+    - echo 'Instalação com criptografia concluída'
