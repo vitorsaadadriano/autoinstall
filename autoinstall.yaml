@@ -10,44 +10,53 @@ autoinstall:
     username: suporte
     password: $6$v2hQvx/ec0AE3gpA$VpADlI.hi.Ban4lTTsFtqzmoC46aqplwrwW/9/6cGvrL.6G8apb/H9lX5BvzNBAHyxdzyAoStJWRH9sVDFswk0
   
+  # FORÇAR uso da configuração customizada
   storage:
     layout:
       name: custom
+    swap:
+      size: 0
     config:
-      # Disco principal
       - type: disk
         id: disk-vda
         path: /dev/vda
         ptable: gpt
         wipe: superblock-recursive
+        preserve: false
       
-      # Partição EFI/Boot
+      # Partição BIOS Boot
       - type: partition
-        id: partition-efi
+        id: partition-bios
         device: disk-vda
         number: 1
-        size: 512M
-        flag: boot
-        grub_device: true
+        size: 1M
+        flag: bios_grub
+      
+      # Partição Boot (não criptografada)
+      - type: partition
+        id: partition-boot
+        device: disk-vda
+        number: 2
+        size: 1G
       
       # Partição para criptografia
       - type: partition
         id: partition-encrypted
         device: disk-vda
-        number: 2
+        number: 3
         size: -1
       
-      # Formatação EFI
+      # Formatação da partição boot
       - type: format
-        id: format-efi
-        fstype: fat32
-        volume: partition-efi
+        id: format-boot
+        fstype: ext4
+        volume: partition-boot
       
-      # Configuração de criptografia LUKS
+      # CRIPTOGRAFIA LUKS
       - type: dm_crypt
         id: dmcrypt-root
         volume: partition-encrypted
-        dm_name: ubuntu-encrypted
+        dm_name: root-encrypted
         key: "mudar123"
       
       # Formatação da partição criptografada
@@ -58,9 +67,9 @@ autoinstall:
       
       # Montagens
       - type: mount
-        id: mount-efi
-        device: format-efi
-        path: /boot/efi
+        id: mount-boot
+        device: format-boot
+        path: /boot
       
       - type: mount
         id: mount-root
@@ -70,8 +79,11 @@ autoinstall:
   packages:
     - ubuntu-desktop-minimal
     - cryptsetup
+    - cryptsetup-initramfs
   
   timezone: America/Sao_Paulo
   
+  # Comandos para garantir criptografia
   late-commands:
-    - echo 'Instalação com criptografia concluída'
+    - curtin in-target --target=/target -- update-initramfs -u
+    - echo 'Criptografia LUKS configurada'
