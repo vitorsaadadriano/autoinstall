@@ -28,7 +28,7 @@ autoinstall:
       name: lvm_crypt
       match:
         # ALTERE AQUI para o disco correto (o menor disco)
-        path: /dev/sda
+        path: /dev/vda
       config:
         # Apaga todas as partições existentes no disco alvo
         - type: disk
