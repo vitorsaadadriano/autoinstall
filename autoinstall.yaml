@@ -118,5 +118,4 @@ autoinstall:
     - curtin in-target -- apt-get -y upgrade
 
   # Seção para não pedir confirmação ao usuário durante a instalação
-  interactive-sections:
-    - -
+  interactive-sections: []
