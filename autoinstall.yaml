@@ -1,15 +1,15 @@
-#cloud-config
+version: 1
 autoinstall:
   version: 1
-  
-  identity:
-    hostname: BRJTNO
-    username: suporte
-    password: "$6$VWFLXJ0XGc1QTFSY$McJ0Tz0chAfNgLFHuGQi/b6dTN/GDwLYyVkgFnhiJQkYBfMG9NMkl.J0wxMWyU2DDeBcbQ3WT.KIJTRUyn5an1"
-  
-  ssh:
-    install-server: false
-  
+  locale: en_US.UTF-8
+  keyboard:
+    layout: us
+  network:
+    network:
+      version: 2
+      ethernets:
+        enp1s0:
+          dhcp4: true
   storage:
     config:
       - id: disk0
@@ -62,7 +62,7 @@ autoinstall:
         type: dm_crypt
         dm_name: luroot
         volume: root
-        key: mudar123
+        key: temppassword123
       
       - id: luroot-format
         type: format
@@ -85,8 +85,24 @@ autoinstall:
         device: esp-format
         path: /boot/efi
   
+  identity:
+    hostname: BRJTNO
+    username: suporte
+    password: '$6$rounds=4096$saltsalt$3xBgVkAZuHPUK2zQe7.ZZH8J9WKvxAV0JM7E2WX5wY0123456789abcdef'
+    realname: 'Ubuntu User'
+  
+  ssh:
+    install-server: true
+    allow-pw: true
+  
   packages:
-    - ubuntu-desktop-minimal
+    - openssh-server
+    - curl
+    - wget
+    - vim
+  
+  user-data:
+    disable_root: false
   
   late-commands:
-    - curtin in-target --target=/target -- apt update
+    - 'echo "Installation completed successfully"'
