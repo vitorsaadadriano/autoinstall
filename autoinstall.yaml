@@ -1,121 +1,75 @@
 #cloud-config
-autoinstall:
-  version: 1
-  # Configuração de idioma e teclado para Português (Brasil)
-  locale: pt_BR.UTF-8
-  keyboard:
-    layout: br
-    variant: ""
-
- # Define o fuso horário
-  timezone: "America/Sao_Paulo"
-
-  # Criação do usuário e senha
-  # A senha fornecida aqui será criptografada no sistema final.
-  identity:
-    hostname: ubuntu-server
-    username: suporte
-    password: "Mudar@123"
-
-  # ATENÇÃO: Esta seção apaga completamente o disco especificado!
-  # O layout foi configurado para usar o disco /dev/sda.
-  # Você DEVE verificar e alterar para o disco correto onde deseja instalar.
-  # Por exemplo: /dev/sdb, /dev/nvme0n1, etc.
-  # O recurso "menor disco" não pode ser selecionado dinamicamente no YAML,
-  # então você precisa identificar o disco menor manualmente antes de iniciar.
-  storage:
-    layout:
-      name: lvm_crypt
+storage:
+  config:
+    - id: disk0
+      name: disk0
+      type: disk
+      ptable: gpt
+      preserve: false
+      grub_device: false
       match:
-        # ALTERE AQUI para o disco correto (o menor disco)
-        path: /dev/vda
-      config:
-        # Apaga todas as partições existentes no disco alvo
-        - type: disk
-          id: disk-target
-          ptable: gpt
-          wipe: superblock-recursive
-          preserve: false
-
-        # 1. Partição EFI
-        - type: partition
-          id: part-efi
-          device: disk-target
-          size: 600M
-          flag: boot
-          grub_device: true
-
-        # 2. Partição /boot
-        - type: partition
-          id: part-boot
-          device: disk-target
-          size: 3072M
-
-        # 3. Partição para o Volume Físico que será criptografado (restante do disco)
-        - type: partition
-          id: part-pv
-          device: disk-target
-          size: -1 # Usa todo o espaço restante
-
-        # Formata a partição EFI como FAT32
-        - type: format
-          id: format-efi
-          volume: part-efi
-          fstype: fat32
-
-        # Formata a partição /boot como EXT4
-        - type: format
-          id: format-boot
-          volume: part-boot
-          fstype: ext4
-
-        # Cria o container de criptografia LUKS na partição principal
-        - type: luks
-          id: luks-crypto
-          name: luks_root # Nome do volume criptografado
-          device: part-pv
-          passphrase: "mudar123" # SENHA DE TESTE
-
-        # Cria o Volume Group (VG) do LVM dentro do container LUKS
-        - type: lvm_volgroup
-          id: vg-system
-          name: vg0
-          devices:
-            - luks-crypto
-
-        # Cria o Volume Lógico (LV) para o sistema ("/") usando 100% do VG
-        - type: lvm_logvol
-          id: lv-root
-          volgroup: vg-system
-          name: lv_root
-          size: 100%FREE
-
-        # Formata o Volume Lógico da raiz como EXT4
-        - type: format
-          id: format-root
-          volume: lv-root
-          fstype: ext4
-
-        # Monta as partições
-        - type: mount
-          id: mount-root
-          path: /
-          device: format-root
-
-        - type: mount
-          id: mount-boot
-          path: /boot
-          device: format-boot
-
-        - type: mount
-          id: mount-efi
-          path: /boot/efi
-          device: format-efi
-
-  # Atualiza os pacotes logo após a instalação
-  late-commands:
-    - curtin in-target -- apt-get update
-    - curtin in-target -- apt-get -y upgrade
-
-  # Seção para não pedir confirmação ao usuário durante a instalação
-  interactive-sections: []
+        size: smallest
+    
+    # EFI System Partition - 600MB
+    - id: esp
+      type: partition
+      device: disk0
+      size: 600M
+      flag: boot
+      number: 1
+      wipe: superblock
+      grub_device: true
+    
+    - id: esp-format
+      type: format
+      fstype: fat32
+      volume: esp
+    
+    # Boot partition - 3072MB (3GB)
+    - id: boot
+      type: partition
+      device: disk0
+      size: 3072M
+      number: 2
+      wipe: superblock
+    
+    - id: boot-format
+      type: format
+      fstype: ext4
+      volume: boot
+    
+    # Root partition - resto do disco
+    - id: root
+      type: partition
+      device: disk0
+      size: -1
+      number: 3
+      wipe: superblock
+    
+    # LUKS encryption no root
+    - id: luroot
+      type: dm_crypt
+      dm_name: luroot
+      volume: root
+      key: temppassword123
+    
+    - id: luroot-format
+      type: format
+      fstype: ext4
+      volume: luroot
+    
+    # Mount points
+    - id: luroot-mount
+      type: mount
+      device: luroot-format
+      path: /
+    
+    - id: boot-mount
+      type: mount
+      device: boot-format
+      path: /boot
+    
+    - id: esp-mount
+      type: mount
+      device: esp-format
+      path: /boot/efi
