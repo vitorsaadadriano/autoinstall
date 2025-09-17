@@ -1,75 +1,92 @@
 #cloud-config
-storage:
-  config:
-    - id: disk0
-      name: disk0
-      type: disk
-      ptable: gpt
-      preserve: false
-      grub_device: false
-      match:
-        size: smallest
-    
-    # EFI System Partition - 600MB
-    - id: esp
-      type: partition
-      device: disk0
-      size: 600M
-      flag: boot
-      number: 1
-      wipe: superblock
-      grub_device: true
-    
-    - id: esp-format
-      type: format
-      fstype: fat32
-      volume: esp
-    
-    # Boot partition - 3072MB (3GB)
-    - id: boot
-      type: partition
-      device: disk0
-      size: 3072M
-      number: 2
-      wipe: superblock
-    
-    - id: boot-format
-      type: format
-      fstype: ext4
-      volume: boot
-    
-    # Root partition - resto do disco
-    - id: root
-      type: partition
-      device: disk0
-      size: -1
-      number: 3
-      wipe: superblock
-    
-    # LUKS encryption no root
-    - id: luroot
-      type: dm_crypt
-      dm_name: luroot
-      volume: root
-      key: temppassword123
-    
-    - id: luroot-format
-      type: format
-      fstype: ext4
-      volume: luroot
-    
-    # Mount points
-    - id: luroot-mount
-      type: mount
-      device: luroot-format
-      path: /
-    
-    - id: boot-mount
-      type: mount
-      device: boot-format
-      path: /boot
-    
-    - id: esp-mount
-      type: mount
-      device: esp-format
-      path: /boot/efi
+autoinstall:
+  version: 1
+  
+  identity:
+    hostname: BRJTNO
+    username: suporte
+    password: "$6$VWFLXJ0XGc1QTFSY$McJ0Tz0chAfNgLFHuGQi/b6dTN/GDwLYyVkgFnhiJQkYBfMG9NMkl.J0wxMWyU2DDeBcbQ3WT.KIJTRUyn5an1"
+  
+  ssh:
+    install-server: false
+  
+  storage:
+    config:
+      - id: disk0
+        name: disk0
+        type: disk
+        ptable: gpt
+        preserve: false
+        grub_device: false
+        match:
+          size: smallest
+      
+      # EFI System Partition - 600MB
+      - id: esp
+        type: partition
+        device: disk0
+        size: 600M
+        flag: boot
+        number: 1
+        wipe: superblock
+        grub_device: true
+      
+      - id: esp-format
+        type: format
+        fstype: fat32
+        volume: esp
+      
+      # Boot partition - 3072MB (3GB)
+      - id: boot
+        type: partition
+        device: disk0
+        size: 3072M
+        number: 2
+        wipe: superblock
+      
+      - id: boot-format
+        type: format
+        fstype: ext4
+        volume: boot
+      
+      # Root partition - resto do disco
+      - id: root
+        type: partition
+        device: disk0
+        size: -1
+        number: 3
+        wipe: superblock
+      
+      # LUKS encryption no root
+      - id: luroot
+        type: dm_crypt
+        dm_name: luroot
+        volume: root
+        key: mudar123
+      
+      - id: luroot-format
+        type: format
+        fstype: ext4
+        volume: luroot
+      
+      # Mount points
+      - id: luroot-mount
+        type: mount
+        device: luroot-format
+        path: /
+      
+      - id: boot-mount
+        type: mount
+        device: boot-format
+        path: /boot
+      
+      - id: esp-mount
+        type: mount
+        device: esp-format
+        path: /boot/efi
+  
+  packages:
+    - ubuntu-desktop-minimal
+  
+  late-commands:
+    - curtin in-target --target=/target -- apt update
