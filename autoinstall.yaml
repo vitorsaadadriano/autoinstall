@@ -4,8 +4,8 @@ autoinstall:
   identity:
     hostname: BRJTNO
     username: suporte
-    password: '$6$rounds=4096$saltsalt$3xBgVkAZuHPUK2zQe7.ZZH8J9WKvxAV0JM7E2WX5wY0123456789abcdef'
-    realname: 'Ubuntu User'
+    password: '$6$08TgGRs73skfXi5G$QpMdyV5PkYp3FbawnkmpGSmU/m/VJzddsCP4tcjkI49TaeSRwp9.iSGMSneeYuEjFLaRp0oZ2i4Y.AivZDa05/'
+    realname: 'suporte'
   locale: pt_BR.UTF-8
   keyboard:
     layout: br
@@ -76,7 +76,7 @@ autoinstall:
         type: dm_crypt
         dm_name: luroot
         volume: root
-        key: temppassword123
+        key: mudar123
       
       - id: luroot-format
         type: format
