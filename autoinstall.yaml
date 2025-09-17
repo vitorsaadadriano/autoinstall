@@ -26,13 +26,22 @@ autoinstall:
         match:
           size: smallest
       
+      # BIOS Boot Partition - 1MB (necessária para GRUB em GPT)
+      - id: bios_boot
+        type: partition
+        device: disk0
+        size: 1M
+        number: 1
+        flag: bios_grub
+        wipe: superblock
+      
       # EFI System Partition - 600MB
       - id: esp
         type: partition
         device: disk0
         size: 600M
         flag: boot
-        number: 1
+        number: 2
         wipe: superblock
         grub_device: false
       
@@ -46,7 +55,7 @@ autoinstall:
         type: partition
         device: disk0
         size: 3072M
-        number: 2
+        number: 3
         wipe: superblock
       
       - id: boot-format
@@ -59,7 +68,7 @@ autoinstall:
         type: partition
         device: disk0
         size: -1
-        number: 3
+        number: 4
         wipe: superblock
       
       # LUKS encryption no root
