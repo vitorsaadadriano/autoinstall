@@ -1,15 +1,14 @@
-version: 1
+#cloud-config
 autoinstall:
   version: 1
-  locale: en_US.UTF-8
+    identity:
+    hostname: BRJTNO
+    username: suporte
+    password: '$6$rounds=4096$saltsalt$3xBgVkAZuHPUK2zQe7.ZZH8J9WKvxAV0JM7E2WX5wY0123456789abcdef'
+    realname: 'Ubuntu User'
+  locale: pt_BR.utf8
   keyboard:
-    layout: us
-  network:
-    network:
-      version: 2
-      ethernets:
-        enp1s0:
-          dhcp4: true
+    layout: br 
   storage:
     config:
       - id: disk0
@@ -84,12 +83,6 @@ autoinstall:
         type: mount
         device: esp-format
         path: /boot/efi
-  
-  identity:
-    hostname: BRJTNO
-    username: suporte
-    password: '$6$rounds=4096$saltsalt$3xBgVkAZuHPUK2zQe7.ZZH8J9WKvxAV0JM7E2WX5wY0123456789abcdef'
-    realname: 'Ubuntu User'
   
   ssh:
     install-server: true
