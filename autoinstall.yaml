@@ -6,9 +6,15 @@ autoinstall:
     username: suporte
     password: '$6$rounds=4096$saltsalt$3xBgVkAZuHPUK2zQe7.ZZH8J9WKvxAV0JM7E2WX5wY0123456789abcdef'
     realname: 'Ubuntu User'
-  locale: pt_BR.utf8
+  locale: pt_BR.UTF-8
   keyboard:
     layout: br
+  network:
+    network:
+      version: 2
+      ethernets:
+        enp1s0:
+          dhcp4: true
   storage:
     config:
       - id: disk0
@@ -16,7 +22,7 @@ autoinstall:
         type: disk
         ptable: gpt
         preserve: false
-        grub_device: false
+        grub_device: true
         match:
           size: smallest
       
@@ -28,7 +34,7 @@ autoinstall:
         flag: boot
         number: 1
         wipe: superblock
-        grub_device: true
+        grub_device: false
       
       - id: esp-format
         type: format
