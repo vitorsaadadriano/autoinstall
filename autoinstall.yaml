@@ -118,4 +118,4 @@ autoinstall:
     - 'chown 1000:1000 /target/home/suporte'
     - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu-02-disco-jtech-crypto.sh -O /target/tmp/ubuntu-02-disco-jtech-crypto.sh'
     - 'chmod +x /target/tmp/ubuntu-02-disco-jtech-crypto.sh'
-    - 'chroot /target /bin/bash -c "cd /tmp && ./ubuntu-02-disco-jtech-crypto.sh"'
+    - 'chroot /target /bin/bash -c "cd /tmp && LARGEST_DISK=\$(lsblk -ndo NAME,SIZE | grep -v loop | sort -k2 -h | tail -1 | awk '"'"'{print \$1}'"'"') && echo \"Maior disco encontrado: \$LARGEST_DISK\" && echo -e \"\$LARGEST_DISK\\nmudar123\\nmudar123\" | ./ubuntu-02-disco-jtech-crypto.sh"'
