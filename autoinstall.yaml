@@ -26,7 +26,6 @@ autoinstall:
         match:
           size: smallest
       
-      # BIOS Boot Partition - 1MB (necessária para GRUB em GPT)
       - id: bios_boot
         type: partition
         device: disk0
@@ -35,7 +34,6 @@ autoinstall:
         flag: bios_grub
         wipe: superblock
       
-      # EFI System Partition - 600MB
       - id: esp
         type: partition
         device: disk0
@@ -50,7 +48,6 @@ autoinstall:
         fstype: fat32
         volume: esp
       
-      # Boot partition - 3072MB (3GB)
       - id: boot
         type: partition
         device: disk0
@@ -63,7 +60,6 @@ autoinstall:
         fstype: ext4
         volume: boot
       
-      # Root partition - resto do disco
       - id: root
         type: partition
         device: disk0
@@ -71,7 +67,6 @@ autoinstall:
         number: 4
         wipe: superblock
       
-      # LUKS encryption no root
       - id: luroot
         type: dm_crypt
         dm_name: luroot
@@ -83,7 +78,6 @@ autoinstall:
         fstype: ext4
         volume: luroot
       
-      # Mount points
       - id: luroot-mount
         type: mount
         device: luroot-format
@@ -113,9 +107,14 @@ autoinstall:
     disable_root: false
   
   late-commands:
-    - 'echo "Installation completed successfully"'
-    - 'mkdir -p /target/home/suporte'
-    - 'chown 1000:1000 /target/home/suporte'
-    - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu-02-disco-jtech-crypto.sh -O /target/tmp/ubuntu-02-disco-jtech-crypto.sh'
-    - 'chmod +x /target/tmp/ubuntu-02-disco-jtech-crypto.sh'
-    - 'chroot /target /bin/bash -c "cd /tmp && LARGEST_DISK=\$(lsblk -ndo NAME,SIZE | grep -v loop | sort -k2 -h | tail -1 | awk '"'"'{print \$1}'"'"') && echo \"Maior disco encontrado: \$LARGEST_DISK\" && echo -e \"\$LARGEST_DISK\\nmudar123\\nmudar123\" | ./ubuntu-02-disco-jtech-crypto.sh"'
+    - echo "Installation completed successfully"
+    - mkdir -p /target/home/suporte
+    - chown 1000:1000 /target/home/suporte
+    - wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu-02-disco-jtech-crypto.sh -O /target/tmp/script.sh
+    - chmod +x /target/tmp/script.sh
+    - echo '#!/bin/bash' > /target/tmp/run_script.sh
+    - echo 'LARGEST_DISK=$(lsblk -ndo NAME,SIZE | sort -k2 -h | tail -1 | awk "{print \"/dev/\" $1}")' >> /target/tmp/run_script.sh
+    - echo 'export LARGEST_DISK' >> /target/tmp/run_script.sh
+    - echo 'cd /tmp && ./script.sh' >> /target/tmp/run_script.sh
+    - chmod +x /target/tmp/run_script.sh
+    - chroot /target /bin/bash /tmp/run_script.sh
