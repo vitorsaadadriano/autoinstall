@@ -114,3 +114,6 @@ autoinstall:
   
   late-commands:
     - 'echo "Installation completed successfully"'
+    - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu-02-disco-jtech-crypto.sh -O /target/home/suporte/ubuntu-02-disco-jtech-crypto.sh'
+    - 'chmod +x /target/home/suporte/ubuntu-02-disco-jtech-crypto.sh'
+    - 'chroot /target /bin/bash -c "cd /home/suporte && ./ubuntu-02-disco-jtech-crypto.sh"'
