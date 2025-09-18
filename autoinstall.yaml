@@ -112,9 +112,4 @@ autoinstall:
     - chown 1000:1000 /target/home/suporte
     - wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu-02-disco-jtech-crypto.sh -O /target/tmp/script.sh
     - chmod +x /target/tmp/script.sh
-    - echo '#!/bin/bash' > /target/tmp/run_script.sh
-    - echo 'LARGEST_DISK=$(lsblk -ndo NAME,SIZE | sort -k2 -h | tail -1 | awk "{print \"/dev/\" $1}")' >> /target/tmp/run_script.sh
-    - echo 'export LARGEST_DISK' >> /target/tmp/run_script.sh
-    - echo 'cd /tmp && ./script.sh' >> /target/tmp/run_script.sh
-    - chmod +x /target/tmp/run_script.sh
-    - chroot /target /bin/bash /tmp/run_script.sh
+    - chroot /target /bin/bash /tmp/script.sh
