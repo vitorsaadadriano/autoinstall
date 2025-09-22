@@ -26,6 +26,7 @@ autoinstall:
         match:
           size: smallest
       
+      # BIOS Boot Partition - 1MB (necessária para GRUB em GPT)
       - id: bios_boot
         type: partition
         device: disk0
@@ -34,6 +35,7 @@ autoinstall:
         flag: bios_grub
         wipe: superblock
       
+      # EFI System Partition - 600MB
       - id: esp
         type: partition
         device: disk0
@@ -48,6 +50,7 @@ autoinstall:
         fstype: fat32
         volume: esp
       
+      # Boot partition - 3072MB (3GB)
       - id: boot
         type: partition
         device: disk0
@@ -60,6 +63,7 @@ autoinstall:
         fstype: ext4
         volume: boot
       
+      # Root partition - resto do disco
       - id: root
         type: partition
         device: disk0
@@ -67,6 +71,7 @@ autoinstall:
         number: 4
         wipe: superblock
       
+      # LUKS encryption no root
       - id: luroot
         type: dm_crypt
         dm_name: luroot
@@ -78,6 +83,7 @@ autoinstall:
         fstype: ext4
         volume: luroot
       
+      # Mount points
       - id: luroot-mount
         type: mount
         device: luroot-format
@@ -102,20 +108,14 @@ autoinstall:
     - curl
     - wget
     - vim
+    - cryptsetup
+    - parted
   
   user-data:
     disable_root: false
   
   late-commands:
-    - echo "Installation completed successfully"
-    - mkdir -p /target/home/suporte
-    - chown 1000:1000 /target/home/suporte
-    - wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu-02-disco-jtech-crypto.sh -O /target/tmp/script.sh
-    - chmod +x /target/tmp/script.sh
-    - echo "#!/bin/bash" > /target/tmp/run_script.sh
-    - echo "DISK=\$(lsblk -ndo NAME,SIZE,TYPE | grep -v loop | grep disk | sort -k2 -h | tail -1 | awk '{print \$1}')" >> /target/tmp/run_script.sh
-    - echo "export dispositivo=\$DISK" >> /target/tmp/run_script.sh
-    - echo "echo Using disk: \$dispositivo" >> /target/tmp/run_script.sh
-    - echo "/tmp/script.sh" >> /target/tmp/run_script.sh
-    - chmod +x /target/tmp/run_script.sh
-    - chroot /target /bin/bash /tmp/run_script.sh
+    - 'echo "Installation completed successfully"'
+    - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-02-disco-jtech-crypto.sh -O /target/tmp/jtech-setup.sh'
+    - 'chmod +x /target/tmp/jtech-setup.sh'
+    - 'curtin in-target --target=/target -- /tmp/jtech-setup.sh'
