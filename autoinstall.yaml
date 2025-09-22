@@ -104,12 +104,13 @@ autoinstall:
     allow-pw: true
   
   packages:
-    - openssh-server
-    - curl
-    - wget
-    - vim
-    - cryptsetup
-    - parted
+  - openssh-server
+  - curl
+  - wget
+  - vim
+  - cryptsetup
+  - parted
+  - bc
   
   user-data:
     disable_root: false
