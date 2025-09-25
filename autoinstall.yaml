@@ -111,6 +111,15 @@ autoinstall:
   - cryptsetup
   - parted
   - bc
+  - realmd
+  - sssd
+  - sssd-tools
+  - krb5-user
+  - packagekit
+  - adcli
+  - samba-common-bin
+  - oddjob
+  - oddjob-mkhomedir
   
   user-data:
     disable_root: false
@@ -123,3 +132,6 @@ autoinstall:
     - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-03-apt-install-basico.sh -O /target/tmp/ubuntu24-03-apt-install-basico.sh'
     - 'chmod +x /target/tmp/ubuntu24-03-apt-install-basico.sh'
     - 'curtin in-target --target=/target -- /tmp/ubuntu24-03-apt-install-basico.sh'
+    - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu-04-ingressa-dominio.sh -O /target/tmp/ubuntu-04-ingressa-dominio.sh'
+    - 'chmod +x /target/tmp/ubuntu-04-ingressa-dominio.sh'
+    - 'curtin in-target --target=/target -- /tmp/ubuntu-04-ingressa-dominio.sh'
