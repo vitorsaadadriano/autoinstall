@@ -112,14 +112,15 @@ autoinstall:
   - parted
   - bc
   - realmd
-  - sssd
   - sssd-tools
-  - krb5-user
-  - packagekit
+  - sssd
+  - libnss-sss
+  - libpam-sss
   - adcli
   - samba-common-bin
-  - oddjob
-  - oddjob-mkhomedir
+  - krb5-user
+  - packagekit
+  - expect
   
   user-data:
     disable_root: false
@@ -132,6 +133,8 @@ autoinstall:
     - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-03-apt-install-basico.sh -O /target/tmp/ubuntu24-03-apt-install-basico.sh'
     - 'chmod +x /target/tmp/ubuntu24-03-apt-install-basico.sh'
     - 'curtin in-target --target=/target -- /tmp/ubuntu24-03-apt-install-basico.sh'
+    - 'curtin in-target --target=/target -- apt update'
+    - 'curtin in-target --target=/target -- apt install -y realmd sssd-tools sssd libnss-sss libpam-sss adcli samba-common-bin krb5-user packagekit'
     - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-04-ingressa-dominio.sh -O /target/tmp/ubuntu24-04-ingressa-dominio.sh'
     - 'chmod +x /target/tmp/ubuntu24-04-ingressa-dominio.sh'
     - 'curtin in-target --target=/target -- /tmp/ubuntu24-04-ingressa-dominio.sh'
