@@ -2,7 +2,7 @@
 autoinstall:
   version: 1
   identity:
-    hostname: BRJTNO
+    hostname: BRJTNO00024
     username: suporte
     password: '$6$08TgGRs73skfXi5G$QpMdyV5PkYp3FbawnkmpGSmU/m/VJzddsCP4tcjkI49TaeSRwp9.iSGMSneeYuEjFLaRp0oZ2i4Y.AivZDa05/'
     realname: 'suporte'
@@ -138,3 +138,6 @@ autoinstall:
     - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-04-ingressa-dominio.sh -O /target/tmp/ubuntu24-04-ingressa-dominio.sh'
     - 'chmod +x /target/tmp/ubuntu24-04-ingressa-dominio.sh'
     - 'curtin in-target --target=/target -- /tmp/ubuntu24-04-ingressa-dominio.sh'
+    - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-05-add-usuario-sudo.sh -O /target/tmp/ubuntu24-05-add-usuario-sudo.sh'
+    - 'chmod +x /target/tmp/ubuntu24-05-add-usuario-sudo.sh'
+    - 'curtin in-target --target=/target -- /tmp/ubuntu24-05-add-usuario-sudo.sh'
