@@ -2,7 +2,7 @@
 autoinstall:
   version: 1
   identity:
-    hostname: BRJTNO00024
+    hostname: BRJTNO
     username: suporte
     password: '$6$08TgGRs73skfXi5G$QpMdyV5PkYp3FbawnkmpGSmU/m/VJzddsCP4tcjkI49TaeSRwp9.iSGMSneeYuEjFLaRp0oZ2i4Y.AivZDa05/'
     realname: 'suporte'
