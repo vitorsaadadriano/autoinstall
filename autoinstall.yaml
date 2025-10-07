@@ -121,6 +121,9 @@ autoinstall:
   - krb5-user
   - packagekit
   - expect
+  - git
+  - python3
+  - unzip
   
   user-data:
     disable_root: false
@@ -141,3 +144,6 @@ autoinstall:
     - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-05-add-usuario-sudo.sh -O /target/tmp/ubuntu24-05-add-usuario-sudo.sh'
     - 'chmod +x /target/tmp/ubuntu24-05-add-usuario-sudo.sh'
     - 'curtin in-target --target=/target -- /tmp/ubuntu24-05-add-usuario-sudo.sh'
+    - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-01-ambiente-dev-install-autoinstall.sh -O /target/tmp/ubuntu24-01-ambiente-dev-install-autoinstall.sh'
+    - 'chmod +x /target/tmp/ubuntu24-01-ambiente-dev-install-autoinstall.sh'
+    - 'curtin in-target --target=/target -- /tmp/ubuntu24-01-ambiente-dev-install-autoinstall.sh'
