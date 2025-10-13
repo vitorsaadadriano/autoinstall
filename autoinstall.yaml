@@ -104,29 +104,27 @@ autoinstall:
     allow-pw: true
   
   packages:
-  - openssh-server
-  - curl
-  - wget
-  - vim
-  - cryptsetup
-  - parted
-  - bc
-  - realmd
-  - sssd-tools
-  - sssd
-  - libnss-sss
-  - libpam-sss
-  - adcli
-  - samba-common-bin
-  - krb5-user
-  - packagekit
-  - expect
-  - git
-  - python3
-  - unzip
-  
-  user-data:
-    disable_root: false
+    - openssh-server
+    - curl
+    - wget
+    - vim
+    - cryptsetup
+    - parted
+    - bc
+    - realmd
+    - sssd-tools
+    - sssd
+    - libnss-sss
+    - libpam-sss
+    - adcli
+    - samba-common-bin
+    - krb5-user
+    - packagekit
+    - expect
+    - git
+    - python3
+    - unzip
+    - cron
   
   late-commands:
     - 'echo "Installation completed successfully"'
@@ -137,14 +135,17 @@ autoinstall:
     - 'chmod +x /target/tmp/ubuntu24-03-apt-install-basico.sh'
     - 'curtin in-target --target=/target -- /tmp/ubuntu24-03-apt-install-basico.sh'
     - 'curtin in-target --target=/target -- apt update'
-    - 'curtin in-target --target=/target -- apt install -y realmd sssd-tools sssd libnss-sss libpam-sss adcli samba-common-bin krb5-user packagekit'
+    - 'curtin in-target --target=/target -- apt install -y realmd sssd-tools sssd libnss-sss libpam-sss adcli samba-common-bin krb5-user packagekit cron'
     - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-04-ingressa-dominio.sh -O /target/tmp/ubuntu24-04-ingressa-dominio.sh'
     - 'chmod +x /target/tmp/ubuntu24-04-ingressa-dominio.sh'
     - 'curtin in-target --target=/target -- /tmp/ubuntu24-04-ingressa-dominio.sh'
     - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-05-add-usuario-sudo.sh -O /target/tmp/ubuntu24-05-add-usuario-sudo.sh'
     - 'chmod +x /target/tmp/ubuntu24-05-add-usuario-sudo.sh'
     - 'curtin in-target --target=/target -- /tmp/ubuntu24-05-add-usuario-sudo.sh'
-    - 'sleep 10'
-    - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-01-ambiente-dev-install.sh -O /target/tmp/ubuntu24-01-ambiente-dev-install.sh'
-    - 'chmod +x /target/tmp/ubuntu24-01-ambiente-dev-install.sh'
-    - 'curtin in-target --target=/target -- /tmp/ubuntu24-01-ambiente-dev-install.sh'
+    - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-01-ambiente-dev-install.sh -O /target/usr/local/bin/jtech-post-install.sh'
+    - 'chmod +x /target/usr/local/bin/jtech-post-install.sh'
+    - 'echo "@reboot root sleep 60 && /usr/local/bin/jtech-post-install.sh > /var/log/jtech-setup.log 2>&1 && sed -i '\''/jtech-post-install/d'\'' /etc/crontab" >> /target/etc/crontab'
+    - 'curtin in-target --target=/target -- systemctl enable cron'
+
+# Configurações adicionais do cloud-init (fora do autoinstall)
+disable_root: false
