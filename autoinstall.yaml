@@ -1,4 +1,3 @@
-#cloud-config
 autoinstall:
   version: 1
   identity:
@@ -126,6 +125,9 @@ autoinstall:
     - unzip
     - cron
   
+  user-data:
+    disable_root: false
+  
   late-commands:
     - 'echo "Installation completed successfully"'
     - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-02-disco-jtech-crypto.sh -O /target/tmp/jtech-setup.sh'
@@ -146,6 +148,3 @@ autoinstall:
     - 'chmod +x /target/usr/local/bin/jtech-post-install.sh'
     - 'echo "@reboot root sleep 60 && /usr/local/bin/jtech-post-install.sh > /var/log/jtech-setup.log 2>&1 && sed -i /jtech-post-install/d /etc/crontab" >> /target/etc/crontab'
     - 'curtin in-target --target=/target -- systemctl enable cron'
-
-# Configurações adicionais do cloud-init (fora do autoinstall)
-disable_root: false
