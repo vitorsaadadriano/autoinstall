@@ -144,7 +144,7 @@ autoinstall:
     - 'curtin in-target --target=/target -- /tmp/ubuntu24-05-add-usuario-sudo.sh'
     - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-01-ambiente-dev-install.sh -O /target/usr/local/bin/jtech-post-install.sh'
     - 'chmod +x /target/usr/local/bin/jtech-post-install.sh'
-    - 'echo "@reboot root sleep 60 && /usr/local/bin/jtech-post-install.sh > /var/log/jtech-setup.log 2>&1 && sed -i '\''/jtech-post-install/d'\'' /etc/crontab" >> /target/etc/crontab'
+    - 'echo "@reboot root sleep 60 && /usr/local/bin/jtech-post-install.sh > /var/log/jtech-setup.log 2>&1 && sed -i /jtech-post-install/d /etc/crontab" >> /target/etc/crontab'
     - 'curtin in-target --target=/target -- systemctl enable cron'
 
 # Configurações adicionais do cloud-init (fora do autoinstall)
