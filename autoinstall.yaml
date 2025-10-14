@@ -1,3 +1,4 @@
+#cloud-config
 autoinstall:
   version: 1
   identity:
@@ -144,18 +145,6 @@ autoinstall:
     - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-05-add-usuario-sudo.sh -O /target/tmp/ubuntu24-05-add-usuario-sudo.sh'
     - 'chmod +x /target/tmp/ubuntu24-05-add-usuario-sudo.sh'
     - 'curtin in-target --target=/target -- /tmp/ubuntu24-05-add-usuario-sudo.sh'
-    - 'curtin in-target --target=/target -- /tmp/ubuntu24-05-add-usuario-sudo.sh'
-    - 'DOMAIN_USER=$(wget -qO- https://devutils.jtech.com.br/fileservers/download/user-mapping.txt | tr -d "\r\n")'
-    # Adicionar script ao .bashrc do usuário para executar no primeiro login
-    - 'cat >> /target/home/"$DOMAIN_USER"/.bashrc << "EOF"'
-    - '# Setup desenvolvimento - executa apenas uma vez'
-    - 'if [ ! -f ~/.dev-setup-done ]; then'
-    - '  echo "Configurando ambiente de desenvolvimento..."'
-    - '  wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-01-ambiente-dev-install.sh -O /tmp/dev-setup.sh'
-    - '  chmod +x /tmp/dev-setup.sh'
-    - '  /tmp/dev-setup.sh'
-    - '  touch ~/.dev-setup-done'
-    - '  rm -f /tmp/dev-setup.sh'
-    - '  echo "Ambiente de desenvolvimento configurado!"'
-    - 'fi'
-    - 'EOF'
+    - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-06-setup-dev-firstboot.sh -O /target/tmp/ubuntu24-06-setup-dev-firstboot.sh'
+    - 'chmod +x /target/tmp/ubuntu24-06-setup-dev-firstboot.sh'
+    - 'curtin in-target --target=/target -- /tmp/ubuntu24-06-setup-dev-firstboot.sh'
