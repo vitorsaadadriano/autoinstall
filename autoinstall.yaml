@@ -9,9 +9,13 @@ autoinstall:
   keyboard:
     layout: br
   network:
-    network:
-      version: 2
-      renderer: NetworkManager
+    version: 2
+    ethernets:
+      any:
+        match:
+          name: 'e*'
+        dhcp4: true
+        dhcp-identifier: mac
   storage:
     config:
       - id: disk0
