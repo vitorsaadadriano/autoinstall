@@ -11,9 +11,8 @@ autoinstall:
   network:
     version: 2
     ethernets:
-      any:
-        match:
-          name: 'e*'
+      default:
+        match: {}
         dhcp4: true
         dhcp-identifier: mac
   storage:
