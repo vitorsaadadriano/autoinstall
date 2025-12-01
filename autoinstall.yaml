@@ -12,11 +12,7 @@ autoinstall:
 network:
   network:
     version: 2
-    ethernets:
-      all-en:
-        match:
-          name: 'en*'
-        dhcp4: true
+    renderer: NetworkManager
   storage:
     config:
       - id: disk0
