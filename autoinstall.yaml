@@ -16,15 +16,16 @@ autoinstall:
         dhcp4: true
         dhcp-identifier: mac
   storage:
-    config:
-      - id: disk0
-        type: disk
-        ptable: gpt
-        preserve: false
-        grub_device: true
-        match:
-          size: smallest
-      
+  config:
+    - id: disk0
+      type: disk
+      ptable: gpt
+      preserve: false
+      grub_device: true
+      match:
+        size: smallest
+        ssd: true 
+        
       # BIOS Boot Partition - 1MB
       - id: bios_boot
         type: partition
