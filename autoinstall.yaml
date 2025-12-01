@@ -18,7 +18,6 @@ autoinstall:
   storage:
     config:
       - id: disk0
-        name: disk0
         type: disk
         ptable: gpt
         preserve: false
@@ -26,42 +25,49 @@ autoinstall:
         match:
           size: smallest
       
-      # BIOS Boot Partition - 1MB (necessária para GRUB em GPT)
+      # BIOS Boot Partition - 1MB
       - id: bios_boot
         type: partition
         device: disk0
-        size: 1M
+        size: 1MB
         number: 1
         flag: bios_grub
-        wipe: superblock
       
       # EFI System Partition - 600MB
       - id: esp
         type: partition
         device: disk0
-        size: 600M
-        flag: boot
+        size: 600MB
         number: 2
-        wipe: superblock
-        grub_device: false
+        flag: boot
+        grub_device: true
       
       - id: esp-format
         type: format
         fstype: fat32
         volume: esp
       
-      # Boot partition - 3072MB (3GB)
+      - id: esp-mount
+        type: mount
+        device: esp-format
+        path: /boot/efi
+      
+      # Boot partition - 3GB
       - id: boot
         type: partition
         device: disk0
-        size: 3072M
+        size: 3GB
         number: 3
-        wipe: superblock
       
       - id: boot-format
         type: format
         fstype: ext4
         volume: boot
+      
+      - id: boot-mount
+        type: mount
+        device: boot-format
+        path: /boot
       
       # Root partition - resto do disco
       - id: root
@@ -69,9 +75,8 @@ autoinstall:
         device: disk0
         size: -1
         number: 4
-        wipe: superblock
       
-      # LUKS encryption no root
+      # LUKS encryption
       - id: luroot
         type: dm_crypt
         dm_name: luroot
@@ -83,21 +88,10 @@ autoinstall:
         fstype: ext4
         volume: luroot
       
-      # Mount points
       - id: luroot-mount
         type: mount
         device: luroot-format
         path: /
-      
-      - id: boot-mount
-        type: mount
-        device: boot-format
-        path: /boot
-      
-      - id: esp-mount
-        type: mount
-        device: esp-format
-        path: /boot/efi
   
   ssh:
     install-server: true
