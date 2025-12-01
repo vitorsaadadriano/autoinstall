@@ -9,12 +9,14 @@ autoinstall:
   locale: pt_BR.UTF-8
   keyboard:
     layout: br
+network:
   network:
-    network:
-      version: 2
-      ethernets:
-        enp1s0:
-          dhcp4: true
+    version: 2
+    ethernets:
+      all-en:
+        match:
+          name: 'en*'
+        dhcp4: true
   storage:
     config:
       - id: disk0
