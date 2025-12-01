@@ -8,10 +8,10 @@ autoinstall:
   locale: pt_BR.UTF-8
   keyboard:
     layout: br
-network:
   network:
-    version: 2
-    renderer: NetworkManager
+    network:
+      version: 2
+      renderer: NetworkManager
   storage:
     config:
       - id: disk0
@@ -101,23 +101,23 @@ network:
     allow-pw: true
   
   packages:
-  - openssh-server
-  - curl
-  - wget
-  - vim
-  - cryptsetup
-  - parted
-  - bc
-  - realmd
-  - sssd-tools
-  - sssd
-  - libnss-sss
-  - libpam-sss
-  - adcli
-  - samba-common-bin
-  - krb5-user
-  - packagekit
-  - expect
+    - openssh-server
+    - curl
+    - wget
+    - vim
+    - cryptsetup
+    - parted
+    - bc
+    - realmd
+    - sssd-tools
+    - sssd
+    - libnss-sss
+    - libpam-sss
+    - adcli
+    - samba-common-bin
+    - krb5-user
+    - packagekit
+    - expect
   
   user-data:
     disable_root: false
