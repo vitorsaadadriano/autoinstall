@@ -15,6 +15,14 @@ autoinstall:
         match: {}
         dhcp4: true
         dhcp-identifier: mac
+  apt:
+    preserve_sources_list: false
+    primary:
+      - arches: [default]
+        uri: http://br.archive.ubuntu.com/ubuntu
+    security:
+      - arches: [default]
+        uri: http://security.ubuntu.com/ubuntu
   storage:
     config:
       - id: disk0
@@ -99,7 +107,6 @@ autoinstall:
     allow-pw: true
   
   packages:
-    - openssh-server
     - curl
     - wget
     - vim
