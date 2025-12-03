@@ -26,6 +26,7 @@ autoinstall:
           size: smallest
           ssd: true 
         
+      # BIOS Boot Partition - 1MB
       - id: bios_boot
         type: partition
         device: disk0
@@ -33,6 +34,7 @@ autoinstall:
         number: 1
         flag: bios_grub
       
+      # EFI System Partition - 600MB
       - id: esp
         type: partition
         device: disk0
@@ -51,6 +53,7 @@ autoinstall:
         device: esp-format
         path: /boot/efi
       
+      # Boot partition - 3GB
       - id: boot
         type: partition
         device: disk0
@@ -67,12 +70,14 @@ autoinstall:
         device: boot-format
         path: /boot
       
+      # Root partition - resto do disco
       - id: root
         type: partition
         device: disk0
         size: -1
         number: 4
       
+      # LUKS encryption
       - id: luroot
         type: dm_crypt
         dm_name: luroot
@@ -94,12 +99,22 @@ autoinstall:
     allow-pw: true
   
   packages:
+    - openssh-server
     - curl
     - wget
     - vim
     - cryptsetup
     - parted
     - bc
+    - realmd
+    - sssd-tools
+    - sssd
+    - libnss-sss
+    - libpam-sss
+    - adcli
+    - samba-common-bin
+    - krb5-user
+    - packagekit
     - expect
   
   user-data:
@@ -107,14 +122,14 @@ autoinstall:
   
   late-commands:
     - 'echo "Installation completed successfully"'
-    - 'curtin in-target --target=/target -- apt update'
-    - 'curtin in-target --target=/target -- apt install -y openssh-server realmd sssd-tools sssd libnss-sss libpam-sss adcli samba-common-bin krb5-user packagekit'
     - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-02-disco-jtech-crypto.sh -O /target/tmp/jtech-setup.sh'
     - 'chmod +x /target/tmp/jtech-setup.sh'
     - 'curtin in-target --target=/target -- /tmp/jtech-setup.sh'
     - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-03-apt-install-basico.sh -O /target/tmp/ubuntu24-03-apt-install-basico.sh'
     - 'chmod +x /target/tmp/ubuntu24-03-apt-install-basico.sh'
     - 'curtin in-target --target=/target -- /tmp/ubuntu24-03-apt-install-basico.sh'
+    - 'curtin in-target --target=/target -- apt update'
+    - 'curtin in-target --target=/target -- apt install -y realmd sssd-tools sssd libnss-sss libpam-sss adcli samba-common-bin krb5-user packagekit'
     - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-04-ingressa-dominio.sh -O /target/tmp/ubuntu24-04-ingressa-dominio.sh'
     - 'chmod +x /target/tmp/ubuntu24-04-ingressa-dominio.sh'
     - 'curtin in-target --target=/target -- /tmp/ubuntu24-04-ingressa-dominio.sh'
