@@ -36,8 +36,8 @@ autoinstall:
         grub_device: true
         match:
           size: smallest
-          ssd: true 
-        
+          ssd: true
+      
       - id: bios_boot
         type: partition
         device: disk0
@@ -63,42 +63,20 @@ autoinstall:
         device: esp-format
         path: /boot/efi
       
-      - id: boot
-        type: partition
-        device: disk0
-        size: 3GB
-        number: 3
-      
-      - id: boot-format
-        type: format
-        fstype: ext4
-        volume: boot
-      
-      - id: boot-mount
-        type: mount
-        device: boot-format
-        path: /boot
-      
       - id: root
         type: partition
         device: disk0
         size: -1
-        number: 4
+        number: 3
       
-      - id: luks
-        type: dm_crypt
-        dm_name: luks
-        volume: root
-        key: mudar123
-      
-      - id: luks-format
+      - id: root-format
         type: format
         fstype: ext4
-        volume: luks
+        volume: root
       
-      - id: luks-mount
+      - id: root-mount
         type: mount
-        device: luks-format
+        device: root-format
         path: /
   
   ssh:
@@ -108,30 +86,4 @@ autoinstall:
   user-data:
     disable_root: false
   
-  late-commands:
-    - echo 'Configurando repositórios e rede...'
-    - echo 'nameserver 8.8.8.8' > /target/etc/resolv.conf
-    - echo 'nameserver 8.8.4.4' >> /target/etc/resolv.conf
-    - curtin in-target --target=/target -- sed -i 's|file:/cdrom|http://archive.ubuntu.com/ubuntu|g' /etc/apt/sources.list || true
-    - curtin in-target --target=/target -- apt-get clean
-    - curtin in-target --target=/target -- apt-get update
-    - echo 'Instalando pacotes básicos...'
-    - curtin in-target --target=/target -- apt-get install -y openssh-server
-    - curtin in-target --target=/target -- systemctl enable ssh
-    - curtin in-target --target=/target -- apt-get install -y curl wget vim cryptsetup parted bc
-    - echo 'Instalando pacotes de domínio...'
-    - curtin in-target --target=/target -- apt-get install -y realmd sssd-tools sssd libnss-sss libpam-sss adcli samba-common-bin krb5-user packagekit expect
-    - echo 'Executando scripts personalizados...'
-    - wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-02-disco-jtech-crypto.sh -O /target/tmp/jtech-setup.sh || true
-    - chmod +x /target/tmp/jtech-setup.sh || true
-    - curtin in-target --target=/target -- /tmp/jtech-setup.sh || true
-    - wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-03-apt-install-basico.sh -O /target/tmp/ubuntu24-03-apt-install-basico.sh || true
-    - chmod +x /target/tmp/ubuntu24-03-apt-install-basico.sh || true
-    - curtin in-target --target=/target -- /tmp/ubuntu24-03-apt-install-basico.sh || true
-    - wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-04-ingressa-dominio.sh -O /target/tmp/ubuntu24-04-ingressa-dominio.sh || true
-    - chmod +x /target/tmp/ubuntu24-04-ingressa-dominio.sh || true
-    - curtin in-target --target=/target -- /tmp/ubuntu24-04-ingressa-dominio.sh || true
-    - wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-05-add-usuario-sudo.sh -O /target/tmp/ubuntu24-05-add-usuario-sudo.sh || true
-    - chmod +x /target/tmp/ubuntu24-05-add-usuario-sudo.sh || true
-    - curtin in-target --target=/target -- /tmp/ubuntu24-05-add-usuario-sudo.sh || true
-    - echo 'Instalação concluída!'
+  late-commands: []
