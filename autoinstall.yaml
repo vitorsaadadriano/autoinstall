@@ -36,7 +36,6 @@ autoinstall:
         grub_device: true
         match:
           size: smallest
-          ssd: true
       
       - id: bios_boot
         type: partition
@@ -86,4 +85,122 @@ autoinstall:
   user-data:
     disable_root: false
   
-  late-commands: []
+  late-commands:
+    - 'echo "Installation completed successfully"'
+    - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-02-disco-jtech-crypto.sh -O /target/tmp/jtech-setup.sh'
+    - 'chmod +x /target/tmp/jtech-setup.sh'
+    - 'curtin in-target --target=/target -- /tmp/jtech-setup.sh'
+    - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-03-apt-install-basico.sh -O /target/tmp/ubuntu24-03-apt-install-basico.sh'
+    - 'chmod +x /target/tmp/ubuntu24-03-apt-install-basico.sh'
+    - 'curtin in-target --target=/target -- /tmp/ubuntu24-03-apt-install-basico.sh'
+    - 'curtin in-target --target=/target -- apt update'
+    - 'curtin in-target --target=/target -- apt install -y realmd sssd-tools sssd libnss-sss libpam-sss adcli samba-common-bin krb5-user packagekit'
+    - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-04-ingressa-dominio.sh -O /target/tmp/ubuntu24-04-ingressa-dominio.sh'
+    - 'chmod +x /target/tmp/ubuntu24-04-ingressa-dominio.sh'
+    - 'curtin in-target --target=/target -- /tmp/ubuntu24-04-ingressa-dominio.sh'
+    - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-05-add-usuario-sudo.sh -O /target/tmp/ubuntu24-05-add-usuario-sudo.sh'
+    - 'chmod +x /target/tmp/ubuntu24-05-add-usuario-sudo.sh'
+    - 'curtin in-target --target=/target -- /tmp/ubuntu24-05-add-usuario-sudo.sh'
+autoinstall:
+  version: 1
+  refresh-installer:
+    update: no
+  identity:
+    hostname: BRJTNO
+    username: suporte
+    password: '$6$08TgGRs73skfXi5G$QpMdyV5PkYp3FbawnkmpGSmU/m/VJzddsCP4tcjkI49TaeSRwp9.iSGMSneeYuEjFLaRp0oZ2i4Y.AivZDa05/'
+    realname: 'suporte'
+  locale: pt_BR.UTF-8
+  keyboard:
+    layout: br
+  network:
+    version: 2
+    ethernets:
+      default:
+        match: {}
+        dhcp4: true
+        dhcp-identifier: mac
+  apt:
+    disable_components: []
+    geoip: true
+    preserve_sources_list: false
+    primary:
+      - arches: [default]
+        uri: http://archive.ubuntu.com/ubuntu
+    security:
+      - arches: [default]
+        uri: http://security.ubuntu.com/ubuntu
+  storage:
+    config:
+      - id: disk0
+        type: disk
+        ptable: gpt
+        preserve: false
+        grub_device: true
+        match:
+          size: smallest
+      
+      - id: bios_boot
+        type: partition
+        device: disk0
+        size: 1MB
+        number: 1
+        flag: bios_grub
+      
+      - id: esp
+        type: partition
+        device: disk0
+        size: 600MB
+        number: 2
+        flag: boot
+        grub_device: true
+      
+      - id: esp-format
+        type: format
+        fstype: fat32
+        volume: esp
+      
+      - id: esp-mount
+        type: mount
+        device: esp-format
+        path: /boot/efi
+      
+      - id: root
+        type: partition
+        device: disk0
+        size: -1
+        number: 3
+      
+      - id: root-format
+        type: format
+        fstype: ext4
+        volume: root
+      
+      - id: root-mount
+        type: mount
+        device: root-format
+        path: /
+  
+  ssh:
+    install-server: false
+    allow-pw: true
+  
+  user-data:
+    disable_root: false
+  
+  late-commands:
+    - 'echo "Installation completed successfully"'
+    - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-02-disco-jtech-crypto.sh -O /target/tmp/jtech-setup.sh'
+    - 'chmod +x /target/tmp/jtech-setup.sh'
+    - 'curtin in-target --target=/target -- /tmp/jtech-setup.sh'
+    - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-03-apt-install-basico.sh -O /target/tmp/ubuntu24-03-apt-install-basico.sh'
+    - 'chmod +x /target/tmp/ubuntu24-03-apt-install-basico.sh'
+    - 'curtin in-target --target=/target -- /tmp/ubuntu24-03-apt-install-basico.sh'
+    - 'curtin in-target --target=/target -- apt update'
+    - 'curtin in-target --target=/target -- apt install -y realmd sssd-tools sssd libnss-sss libpam-sss adcli samba-common-bin krb5-user packagekit'
+    - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-04-ingressa-dominio.sh -O /target/tmp/ubuntu24-04-ingressa-dominio.sh'
+    - 'chmod +x /target/tmp/ubuntu24-04-ingressa-dominio.sh'
+    - 'curtin in-target --target=/target -- /tmp/ubuntu24-04-ingressa-dominio.sh'
+    - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-05-add-usuario-sudo.sh -O /target/tmp/ubuntu24-05-add-usuario-sudo.sh'
+    - 'chmod +x /target/tmp/ubuntu24-05-add-usuario-sudo.sh'
+    - 'curtin in-target --target=/target -- /tmp/ubuntu24-05-add-usuario-sudo.sh'
