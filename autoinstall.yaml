@@ -86,7 +86,7 @@ autoinstall:
   
   late-commands:
     - 'echo "Installation completed successfully"'
-    - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-02-disco-jtech-crypto.sh -O /target/tmp/jtech-setup.sh'
+    - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-disco-jtech-sem-crypt.sh -O /target/tmp/jtech-setup.sh'
     - 'chmod +x /target/tmp/jtech-setup.sh'
     - 'curtin in-target --target=/target -- /tmp/jtech-setup.sh'
     - 'wget -q https://devutils.jtech.com.br/fileservers/download/ubuntu24-03-apt-install-basico.sh -O /target/tmp/ubuntu24-03-apt-install-basico.sh'
