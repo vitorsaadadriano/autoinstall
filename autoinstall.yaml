@@ -33,6 +33,7 @@ autoinstall:
         type: disk
         ptable: gpt
         preserve: false
+        grub_device: true
         match:
           size: smallest
       
@@ -49,7 +50,6 @@ autoinstall:
         size: 600MB
         number: 2
         flag: boot
-        grub_device: true
       
       - id: esp-format
         type: format
