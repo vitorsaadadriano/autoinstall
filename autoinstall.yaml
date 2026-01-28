@@ -33,7 +33,6 @@ autoinstall:
         type: disk
         ptable: gpt
         preserve: false
-        grub_device: true
         match:
           size: smallest
       
